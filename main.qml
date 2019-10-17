@@ -9,7 +9,7 @@ Window {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    title: qsTr("Qt ImportPKCS12 Sample")
 
     property url loaded_url
     property var loaded_pkcs12
@@ -154,6 +154,7 @@ Window {
         caCertificates = [ ];
 
         const obj = pkcs12Util.importPKCS12( loaded_pkcs12, passPhraseTextField.text );
+        console.log( !obj ? "PKCS#12 failed to be imported." : "PKCS#12 successfully imported!" );
         if ( !obj )
         {
             return;

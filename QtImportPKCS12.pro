@@ -54,9 +54,3 @@ macos|ios: {
     LIBS += -L$$OPENSSLDIR/lib -lcrypto -lssl
 }
 
-#
-# Scripts
-#
-
-OTHER_FILES += \
-    $$files(scripts/*.sh)

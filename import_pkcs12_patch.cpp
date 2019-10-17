@@ -111,14 +111,14 @@ bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QS
     openssl_smart_ptr<BIO> p12Bio = BIO_new_mem_buf( p12Bytes.data(), p12Bytes.size() );
     if ( !p12Bio )
     {
-        qDebug() << ERR_error_string( ERR_get_error(), nullptr );
+        qDebug() << Q_FUNC_INFO << __LINE__ << ERR_error_string( ERR_get_error(), nullptr );
         return false;
     }
 
     openssl_smart_ptr<PKCS12> p12 = d2i_PKCS12_bio( p12Bio, nullptr );
     if ( !p12  )
     {
-        qDebug() << ERR_error_string( ERR_get_error(), nullptr );
+        qDebug() << Q_FUNC_INFO << __LINE__ << ERR_error_string( ERR_get_error(), nullptr );
         return false;
     }
 
@@ -128,7 +128,7 @@ bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QS
     int ret = PKCS12_parse( p12, passPhrase.data(), &pkey, &cert, &ca );
     if ( ret == 0 )
     {
-        qDebug() << ERR_error_string( ERR_get_error(), nullptr );
+        qDebug() << Q_FUNC_INFO << __LINE__ << ERR_error_string( ERR_get_error(), nullptr );
         return false;
     }
 
@@ -136,7 +136,7 @@ bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QS
     ret = PEM_write_bio_PrivateKey( pkeyBio, pkey, nullptr, nullptr, 0, nullptr, nullptr );
     if ( ret == 0 )
     {
-        qDebug() << ERR_error_string( ERR_get_error(), nullptr );
+        qDebug() << Q_FUNC_INFO << __LINE__ << ERR_error_string( ERR_get_error(), nullptr );
         return false;
     }
 
@@ -145,7 +145,7 @@ bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QS
     ret = BIO_read( pkeyBio, pkeyBytes.data(), len );
     if ( ret == 0 )
     {
-        qDebug() << ERR_error_string( ERR_get_error(), nullptr );
+        qDebug() << Q_FUNC_INFO << __LINE__ << ERR_error_string( ERR_get_error(), nullptr );
         return false;
     }
 
@@ -155,7 +155,7 @@ bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QS
     ret = PEM_write_bio_X509( certBio, cert );
     if ( ret == 0 )
     {
-        qDebug() << ERR_error_string( ERR_get_error(), nullptr );
+        qDebug() << Q_FUNC_INFO << __LINE__ << ERR_error_string( ERR_get_error(), nullptr );
         return false;
     }
 
@@ -164,7 +164,7 @@ bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QS
     ret = BIO_read( certBio, certBytes.data(), len );
     if ( ret == 0 )
     {
-        qDebug() << ERR_error_string( ERR_get_error(), nullptr );
+        qDebug() << Q_FUNC_INFO << __LINE__ << ERR_error_string( ERR_get_error(), nullptr );
         return false;
     }
 
@@ -184,7 +184,7 @@ bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QS
             ret = PEM_write_bio_X509( caCertBio, caCert );
             if ( ret == 0 )
             {
-               qDebug() << ERR_error_string( ERR_get_error(), nullptr );
+                qDebug() << Q_FUNC_INFO << __LINE__ << ERR_error_string( ERR_get_error(), nullptr );
                 continue;
             }
 
@@ -193,7 +193,7 @@ bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QS
             ret = BIO_read( caCertBio, caCertBytes.data(), len );
             if ( ret == 0 )
             {
-               qDebug() << ERR_error_string( ERR_get_error(), nullptr );
+                qDebug() << Q_FUNC_INFO << __LINE__ << ERR_error_string( ERR_get_error(), nullptr );
                 continue;
             }
 

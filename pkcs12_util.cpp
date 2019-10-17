@@ -43,23 +43,10 @@ void PKCS12Util::loadFromUrl( const QUrl& url )
     QNetworkReply* reply = mgr->get( req );
     QEventLoop loop;
     QObject::connect( reply, &QNetworkReply::finished, this, &PKCS12Util::onFinished );
-    /*
-    loop.exec();
-    if ( reply->error() != QNetworkReply::NoError ) return QByteArray();
-    if ( reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ) != 200 ) return QByteArray();
-    QByteArray data = reply->readAll();
-    return data;
-    */
 }
 
 QVariant PKCS12Util::importPKCS12( const QVariant& data, const QString& passPhrase )
 {
-    //qDebug() << Q_FUNC_INFO << __LINE__ << data << passPhrase;
-    //qDebug() << Q_FUNC_INFO << data.type();
-    //qDebug() << Q_FUNC_INFO << static_cast<int>( data.type() );
-
-    //qDebug() << Q_FUNC_INFO << __LINE__ << url << passPhrase;
-
     if ( !data.isValid() || data.isNull() )
     {
         return QVariant();
@@ -67,7 +54,7 @@ QVariant PKCS12Util::importPKCS12( const QVariant& data, const QString& passPhra
 
     if ( data.type() != QVariant::ByteArray )
     {
-        qDebug() << Q_FUNC_INFO << " line: " << __LINE__ << data.type() << " unexpected.";
+        qDebug() << __FILE__ << __LINE__ << "data.type: " << data.type() << " unexpected.";
         return QVariant();
     }
 
@@ -104,8 +91,6 @@ QVariant PKCS12Util::importPKCS12( const QVariant& data, const QString& passPhra
 
 void PKCS12Util::onFinished()
 {
-    qDebug() << Q_FUNC_INFO << QObject::sender();
-
     QNetworkReply* reply = ::qobject_cast<QNetworkReply*>( QObject::sender() );
     if ( !reply )
     {
@@ -129,13 +114,20 @@ void PKCS12Util::onFinished()
         return;
     }
 
-    QString contentType = reply->header( QNetworkRequest::ContentTypeHeader ).toString();
-    qDebug() << Q_FUNC_INFO << __LINE__ << "contentType: " << contentType;
+    int contentLength = reply->header( QNetworkRequest::ContentLengthHeader).toInt();
+    if ( contentLength == 0 )
+    {
+        qDebug() << Q_FUNC_INFO << __LINE__ << url << "contentLength: " << contentLength;
+        emit loaded( url, QVariant() );
+        QString contentType = reply->header( QNetworkRequest::ContentTypeHeader ).toString();
+        qDebug() << Q_FUNC_INFO << __LINE__ << "contentType: " << contentType;
+        return;
+    }
 
     QByteArray data = reply->readAll();
     if ( data.isNull() || data.isEmpty() )
     {
-        qDebug() << Q_FUNC_INFO << __LINE__ << url << "empty";
+        qDebug() << Q_FUNC_INFO << __LINE__ << url << " error: data is empty";
         emit loaded( url, QVariant() );
         return;
     }
