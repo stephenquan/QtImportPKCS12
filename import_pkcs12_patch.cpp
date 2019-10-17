@@ -1,10 +1,14 @@
 #include "import_pkcs12_patch.h"
 #include <QSslCertificate>
+
+#ifdef IMPORTPKCS12_OPENSSL
 #include <openssl/ssl.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
 #include <openssl/pkcs12.h>
 #include <QDebug>
+#endif
+
 
 bool ImportPkcs12Patch::importPkcs12(QIODevice *device, QSslKey *key, QSslCertificate *certificate, QList<QSslCertificate> *caCertificates, const QByteArray &passPhrase)
 {
