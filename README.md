@@ -12,7 +12,7 @@ This Qt application was developed and tested with Qt 5.13.1 and OpenSSL 1.1.1d.
 For macOS and iOS, you will need to build OpenSSL from source code.
 Consult this repo for building the OpenSSL prerequisites:
 
- - https://github.com/stephenquan/build_opensslFor
+ - https://github.com/stephenquan/build_openssl
   
 For all other platforms, OpenSSL is part of the default Qt kits.
 
