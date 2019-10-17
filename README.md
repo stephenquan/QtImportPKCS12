@@ -10,25 +10,11 @@ on macOS, iOS by linking directly to OpenSSL.
 
 This Qt application was developed and tested with Qt 5.13.1 and OpenSSL 1.1.1d.
 For macOS and iOS, you will need to build OpenSSL from source code.
+Consult this repo for building the OpenSSL prerequisites:
+
+ - https://github.com/stephenquan/build_opensslFor
+  
 For all other platforms, OpenSSL is part of the default Qt kits.
-
-### Building OpenSSL for iOS
-
-To build OpenSSL for iOS:
-
-```bash
-cd scripts
-./build_openssl_ios.sh
-```
-
-### Building OpenSSL for macOS
-
-To build OpenSSL for macOS:
-
-```bash
-cd scripts
-./build_openssl_macos.sh
-```
 
 ## Running the Qt Application
 
@@ -37,5 +23,7 @@ that contains a private key, certificates, and, optionally, CA certificates.
 
 You may need to specify a passphrase to unlock the PKCS#12 file.
 
-When unlocked, it will display whether it has detected the private key, certificate and
-CA certificates.
+When unlocked, the application display whether it has detected the private key,
+certificate and CA certificates.
+
+The debbugging console will show any issues.
