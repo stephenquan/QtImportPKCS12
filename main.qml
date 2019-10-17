@@ -6,13 +6,15 @@ import QtQuick.Dialogs 1.2
 import PKCS12Util 1.0
 
 Window {
+    id: app
+
     visible: true
     width: 640
     height: 480
     title: qsTr("Qt ImportPKCS12 Sample")
 
-    property url loaded_url
-    property var loaded_pkcs12
+    property var pkcs12
+    property bool pkcs12IsValid: pkcs12 !== null && pkcs12 !== undefined
     property string privateKey: ""
     property string certificate: ""
     property var caCertificates: null
@@ -38,7 +40,7 @@ Window {
                 font.pointSize: 12
                 selectByMouse: true
 
-                onTextChanged: pkcs12Util.loadFromUrl( text )
+                onTextChanged: downloadPKCS12( text )
             }
 
             Button {
@@ -52,10 +54,9 @@ Window {
         }
 
         Text {
-            property bool isLoaded: loaded_pkcs12 !== null && loaded_pkcs12 !== undefined
-            text: isLoaded ? qsTr( "PKCS#12 Loaded" ) : qsTr( "PKCS#12 Not Loaded" )
+            text: pkcs12IsValid ? qsTr( "PKCS#12 Downloaded" ) : qsTr( "PKCS#12 Not Downloaded" )
             font.pointSize: 12
-            color: isLoaded ? "green" : "red"
+            color: pkcs12IsValid ? "green" : "red"
         }
 
         Item {
@@ -77,7 +78,7 @@ Window {
             selectByMouse: true
             echoMode: TextInput.Password
 
-            onTextChanged: runImportPKCS12()
+            onTextChanged: testPKCS12()
         }
 
         Item {
@@ -140,20 +141,35 @@ Window {
         id: pkcs12Util
 
         onLoaded: {
-            loaded_url = url;
-            loaded_pkcs12 = data;
-            runImportPKCS12();
+            pkcs12 = data;
+            console.log( "PKCS#12 file loaded." );
+
+            Qt.callLater( testPKCS12 );
         }
     }
 
-    Component.onCompleted: Qt.callLater( runImportPKCS12 )
+    Component.onCompleted: Qt.callLater( testPKCS12 )
 
-    function runImportPKCS12() {
+    function downloadPKCS12( url )
+    {
+        console.log( "Downloading PKCS#12 file..." );
+        pkcs12Util.loadFromUrl( url )
+    }
+
+    function testPKCS12()
+    {
+        if ( !pkcs12IsValid )
+        {
+            return;
+        }
+
+        console.log( "Importing PKCS#12 file..." );
+
         privateKey = "";
         certificate = "";
         caCertificates = [ ];
 
-        const obj = pkcs12Util.importPKCS12( loaded_pkcs12, passPhraseTextField.text );
+        const obj = pkcs12Util.importPKCS12( pkcs12, passPhraseTextField.text );
         console.log( !obj ? "PKCS#12 failed to be imported." : "PKCS#12 successfully imported!" );
         if ( !obj )
         {
