@@ -1,5 +1,5 @@
 #include "pkcs12_util.h"
-#include "import_pkcs12_patch.h"
+#include "import_pkcs12_openssl.h"
 
 #include <QBuffer>
 #include <QDebug>
@@ -8,6 +8,10 @@
 #include <QEventLoop>
 #include <QNetworkReply>
 #include <QCryptographicHash>
+
+#if defined( Q_OS_MACOS ) || defined( Q_OS_IOS )
+#include "import_pkcs12_openssl.h"
+#endif
 
 PKCS12Util::PKCS12Util( QObject* parent ) :
     QObject( parent )
@@ -71,7 +75,11 @@ QVariant PKCS12Util::importPKCS12( const QVariant& data, const QString& passPhra
     QSslCertificate certificate;
     QList<QSslCertificate> caCertificates;
 
-    bool ok = ImportPkcs12Patch::importPkcs12( &buffer, &privateKey, &certificate, &caCertificates, passPhrase.toUtf8() );
+#if defined( Q_OS_MACOS ) || defined( Q_OS_IOS )
+    bool ok = importPkcs12_openssl( &buffer, &privateKey, &certificate, &caCertificates, passPhrase.toUtf8() );
+#else
+    bool ok = QSslCertificate::importPKCS12( importPkcs12_openssls( &buffer, &privateKey, &certificate, &caCertificates, passPhrase.toUtf8() );
+#endif
     if ( !ok )
     {
         return QVariant();

@@ -54,7 +54,7 @@ Window {
         }
 
         Text {
-            text: pkcs12IsValid ? qsTr( "PKCS#12 Downloaded" ) : qsTr( "PKCS#12 Not Downloaded" )
+            text: pkcs12IsValid ? qsTr( "PKCS#12 selected" ) : qsTr( "PKCS#12 not selected" )
             font.pointSize: 12
             color: pkcs12IsValid ? "green" : "red"
         }

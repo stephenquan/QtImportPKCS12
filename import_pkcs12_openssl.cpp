@@ -1,25 +1,12 @@
-#include "import_pkcs12_patch.h"
 #include <QSslCertificate>
+#include <QDebug>
 
-#ifdef IMPORTPKCS12_OPENSSL
 #include <openssl/ssl.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
 #include <openssl/pkcs12.h>
-#include <QDebug>
-#endif
 
-
-bool ImportPkcs12Patch::importPkcs12(QIODevice *device, QSslKey *key, QSslCertificate *certificate, QList<QSslCertificate> *caCertificates, const QByteArray &passPhrase)
-{
-#ifdef IMPORTPKCS12_OPENSSL
-    return importPkcs12_openssl(device, key, certificate, caCertificates, passPhrase );
-#else
-    return QSslCertificate::importPkcs12(device, key, certificate, caCertificates, passPhrase );
-#endif
-}
-
-#ifdef IMPORTPKCS12_OPENSSL
+#include "import_pkcs12_openssl.h"
 
 template<class T>
 class openssl_smart_ptr
@@ -104,7 +91,7 @@ void openssl_smart_ptr<STACK_OF(X509)>::free( STACK_OF(X509) *ptr )
     sk_X509_pop_free( ptr, X509_free );
 }
 
-bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QSslCertificate *certificate, QList<QSslCertificate> *caCertificates, const QByteArray &passPhrase)
+bool importPkcs12_openssl(QIODevice *device, QSslKey *key, QSslCertificate *certificate, QList<QSslCertificate> *caCertificates, const QByteArray &passPhrase)
 {
     QByteArray p12Bytes = device->readAll();
 
@@ -204,5 +191,3 @@ bool ImportPkcs12Patch::importPkcs12_openssl(QIODevice *device, QSslKey *key, QS
 
     return true;
 }
-
-#endif

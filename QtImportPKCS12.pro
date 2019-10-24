@@ -15,12 +15,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    import_pkcs12_patch.cpp \
     main.cpp \
     pkcs12_util.cpp
 
 HEADERS += \
-    import_pkcs12_patch.h \
     pkcs12_util.h
 
 RESOURCES += qml.qrc
@@ -41,16 +39,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 #
 
 macos|ios: {
+    macos: OPENSSLDIR=$(HOME)/openssl/macos
+    ios: OPENSSLDIR=$(HOME)/openssl/ios
 
-    macos {
-        OPENSSLDIR=$(HOME)/openssl/macos
-    }
-
-    ios {
-        OPENSSLDIR=$(HOME)/openssl/ios
-    }
+    HEADERS += import_pkcs12_openssl.h
+    SOURCES += import_pkcs12_openssl.cpp
 
     INCLUDEPATH += $$OPENSSLDIR/include
     LIBS += -L$$OPENSSLDIR/lib -lcrypto -lssl
 }
-
