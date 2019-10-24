@@ -12,84 +12,25 @@ template<class T>
 class openssl_smart_ptr
 {
 public:
-    openssl_smart_ptr( T* ptr = nullptr )
-        : m_ptr( ptr )
-    {
-    }
-    openssl_smart_ptr( T&& other)
-        : m_ptr( nullptr )
-    {
-        m_ptr = other.m_ptr;
-        other.m_ptr = nullptr;
-    }
-    ~openssl_smart_ptr()
-    {
-        clear();
-    }
-    void clear()
-    {
-        if ( m_ptr )
-        {
-            free( m_ptr );
-            m_ptr = nullptr;
-        }
-    }
-    void free( T* ptr )
-    {
-        Q_UNUSED( ptr )
-    }
-    openssl_smart_ptr& assign( T* ptr )
-    {
-        clear();
-        m_ptr = ptr;
-        return *this;
-    }
-    T* ptr()
-    {
-        return m_ptr;
-    }
-    operator T*()
-    {
-        return m_ptr;
-    }
-    T** operator&()
-    {
-        return &m_ptr;
-    }
+    openssl_smart_ptr( T* ptr = nullptr ) : m_ptr( ptr ) { }
+    openssl_smart_ptr( T&& other) : m_ptr( nullptr ) { m_ptr = other.m_ptr; other.m_ptr = nullptr; }
+    ~openssl_smart_ptr() { clear(); }
+    void clear() { if ( !m_ptr ) { return; } free( m_ptr ); m_ptr = nullptr; }
+    void free( T* ptr ) { Q_UNUSED( ptr ) }
+    openssl_smart_ptr& assign( T* ptr ) { clear(); m_ptr = ptr; return *this; }
+    T* ptr() { return m_ptr; }
+    operator T*() { return m_ptr; }
+    T** operator&() { return &m_ptr; }
     openssl_smart_ptr& operator = ( T* ptr ) { return assign( ptr ); }
 protected:
     T* m_ptr;
 };
 
-template <>
-void openssl_smart_ptr<BIO>::free( BIO *ptr )
-{
-    BIO_free( ptr );
-}
-
-template <>
-void openssl_smart_ptr<PKCS12>::free( PKCS12 *ptr )
-{
-    PKCS12_free( ptr );
-}
-
-template <>
-void openssl_smart_ptr<EVP_PKEY>::free( EVP_PKEY *ptr )
-{
-    EVP_PKEY_free( ptr );
-}
-
-template <>
-void openssl_smart_ptr<X509>::free( X509 *ptr )
-{
-    X509_free( ptr );
-}
-
-template <>
-void openssl_smart_ptr<STACK_OF(X509)>::free( STACK_OF(X509) *ptr )
-{
-    sk_X509_pop_free( ptr, X509_free );
-}
+template <> void openssl_smart_ptr<BIO>::free( BIO *ptr ) { BIO_free( ptr ); }
+template <> void openssl_smart_ptr<PKCS12>::free( PKCS12 *ptr ) { PKCS12_free( ptr ); }
+template <> void openssl_smart_ptr<EVP_PKEY>::free( EVP_PKEY *ptr ) { EVP_PKEY_free( ptr ); }
+template <> void openssl_smart_ptr<X509>::free( X509 *ptr ) { X509_free( ptr ); }
+template <> void openssl_smart_ptr<STACK_OF(X509)>::free( STACK_OF(X509) *ptr ) { sk_X509_pop_free( ptr, X509_free ); }
 
 bool importPkcs12_openssl(QIODevice *device, QSslKey *key, QSslCertificate *certificate, QList<QSslCertificate> *caCertificates, const QByteArray &passPhrase)
 {
