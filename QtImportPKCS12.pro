@@ -38,13 +38,18 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 # OpenSSL
 #
 
-macos|ios: {
-    macos: OPENSSLDIR=$(HOME)/openssl/macos
-    ios: OPENSSLDIR=$(HOME)/openssl/ios
-
+macos: {
+    OPENSSLDIR=$(HOME)/openssl/macos
     HEADERS += import_pkcs12_openssl.h
     SOURCES += import_pkcs12_openssl.cpp
+    INCLUDEPATH += $$OPENSSLDIR/include
+    LIBS += -Wl,-Bstatic -L$$OPENSSLDIR/lib -lcrypto -lssl -Wl,-Bdynamic
+}
 
+ios: {
+    ios: OPENSSLDIR=$(HOME)/openssl/ios
+    HEADERS += import_pkcs12_openssl.h
+    SOURCES += import_pkcs12_openssl.cpp
     INCLUDEPATH += $$OPENSSLDIR/include
     LIBS += -L$$OPENSSLDIR/lib -lcrypto -lssl
 }
