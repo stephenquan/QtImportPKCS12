@@ -3,16 +3,11 @@
 This is a Qt application that demonstrates reading a PKCS#12 (.pfx or p12 file).
 The program is designed to work on Windows, Linux, Android, macOS and iOS.
 
-There `QSslCertificate::importPkcs12` is not implemented on macOS and iOS when the Qt kit
-is built with Apple Secure Transport instead of OpenSSL.
+On Windows, Linux and Android this uses `QSslCertificate::importPkcs12` to load the PKCS#12 file.
 
-See: https://bugreports.qt.io/browse/QTBUG-56596
+On macOS and iOS because we cannot use `QSslCertfiicate::importPkcs12` (see https://devtopia.esri.com/Melbourne/appstudio-factory/issues/302), we will statically link to OpenSSL and implement a custom `importPkcs12()`.
 
-This program demonstrates an implementation whereby we workaround the above limitation
-by statically linking to OpenSSL to implement a custom `importPkcs12()` keeping the
-Qt kit configured for Apple Secure Transport.
-
-This is something any app can do without needing to patch the Qt kit.
+This solutions means we do not need to rebuild the Qt Kit for macOS and iOS from source code. We can keep using the stock Qt Kit configured for Apple Secure Transport.
 
 ## Building
 
