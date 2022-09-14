@@ -5,7 +5,7 @@ The program is designed to work on Windows, Linux, Android, macOS and iOS.
 
 On Windows, Linux and Android this uses `QSslCertificate::importPkcs12` to load the PKCS#12 file.
 
-On macOS and iOS because we cannot use `QSslCertfiicate::importPkcs12` (see https://devtopia.esri.com/Melbourne/appstudio-factory/issues/302), we will statically link to OpenSSL and implement a custom `importPkcs12()`.
+On macOS and iOS because we cannot use `QSslCertfiicate::importPkcs12` we will statically link to OpenSSL and implement a custom `importPkcs12()`.
 
 This solutions means we do not need to rebuild the Qt Kit for macOS and iOS from source code. We can keep using the stock Qt Kit configured for Apple Secure Transport.
 
